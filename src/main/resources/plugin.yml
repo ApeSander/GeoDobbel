@@ -1,0 +1,6 @@
+name: GeoDobbel
+version: '${project.version}'
+main: me.apesander.geodobbel.GeoDobbel
+api-version: 1.18
+authors: [ ApeSander ]
+description: Een simpele flexibele plugin speciaal voor het rollen van dobbelstenen!
