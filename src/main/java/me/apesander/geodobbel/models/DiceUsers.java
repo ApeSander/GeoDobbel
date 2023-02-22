@@ -31,6 +31,7 @@ public class DiceUsers {
             user.setScoreMode(scoreMode);
         }
     }
+
     public void remUser(Player player) {
         spectators.remove(getSpectator(player));
         players.remove(getPlayer(player));
@@ -58,7 +59,8 @@ public class DiceUsers {
     }
 
     public void setAdminPlaying(Player player, boolean playing) {
-        if (playing);
+        if (playing &! containsPlayer(player)) players.add(new DicePlayer(player.getUniqueId()));
+        else players.remove(getPlayer(player));
     }
 
     public void showMessage(String message) {

@@ -6,11 +6,8 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import me.apesander.geodobbel.data.ActiveGames;
 import me.apesander.geodobbel.database.GeoDobbelDB;
-import me.apesander.geodobbel.enums.ScoreOrder;
-import me.apesander.geodobbel.enums.RollMode;
-import me.apesander.geodobbel.enums.ScoreMode;
+import me.apesander.geodobbel.enums.*;
 
-import me.apesander.geodobbel.enums.TurnMode;
 import me.apesander.geodobbel.models.*;
 import me.apesander.geodobbel.utils.CodeGenerator;
 import org.bukkit.entity.Player;
@@ -28,26 +25,18 @@ public class DiceCommand extends BaseCommand {
     }
 
     @HelpCommand
-    @Description("Krijg een overzicht met alle mogelijke commands.")
-    @CommandPermission("geodobbel.commands.help")
     public void onHelp(Player player) {
 
     }
 
     @Subcommand("roll|gooi|rol|throw")
-    @Description("Gooi de dobbelstenen!")
-    @CommandPermission("geodobbel.commands.roll")
     public void onRoll(Player player) {
 
     }
 
     @Subcommand("user|gebruiker")
-    @Description("Krijg speler info.")
-    @CommandPermission("geodobbel.commands.user")
     public class UserCommand extends BaseCommand {
         @Subcommand("list|lijst")
-        @Description("Krijg een lijst van alle spelers in de game.")
-        @CommandPermission("geodobbel.commands.player.list")
         public void onList(Player player) { // DONE
             Game game = ActiveGames.getByUser(player);
 
@@ -91,33 +80,21 @@ public class DiceCommand extends BaseCommand {
         }
 
         @Subcommand("score")
-        @Description("Bekijk de score van een specifieke speler.")
-        @CommandPermission("geodobbel.commands.player.score")
-        @Syntax("<speler>")
         public void onScore(Player player, OnlinePlayer target) {
 
         }
 
         @Subcommand("invite")
-        @Description("Nodig een speler uit.")
-        @CommandPermission("geodobbel.commands.player.invite")
-        @Syntax("<speler>")
         public void onInvite(Player player, OnlinePlayer target) {
 
         }
 
         @Subcommand("kick")
-        @Description("Stuur een speler uit het spel.")
-        @CommandPermission("geodobbel.commands.player.kick")
-        @Syntax("<speler>")
         public void onKick(Player player, OnlinePlayer target) {
 
         }
 
         @Subcommand("promote")
-        @Description("Geef een gebruiker hogere rank binnen het spel.")
-        @CommandPermission("geodobbel.commands.player.promote")
-        @Syntax("<speler>")
         public void onPromote(Player player, OnlinePlayer target, Boolean on) {
             Game game = ActiveGames.getByUser(player);
 
@@ -141,9 +118,6 @@ public class DiceCommand extends BaseCommand {
         }
 
         @Subcommand("demote")
-        @Description("Geef een gebruiker lagere rang binnen het spel.")
-        @CommandPermission("geodobbel.commands.player.demote")
-        @Syntax("<speler>")
         public void onDemote(Player player, OnlinePlayer target, Boolean on) {
             Game game = ActiveGames.getByUser(player);
 
@@ -168,12 +142,8 @@ public class DiceCommand extends BaseCommand {
     }
 
     @Subcommand("game|spel")
-    @Description("Verander de status van het spel.")
-    @CommandPermission("geodobbel.commands.game")
     public class GameCommand extends BaseCommand {
         @Subcommand("create|maak")
-        @Description("Maak een dobbelspel aan.")
-        @CommandPermission("geodobbel.commands.game.create")
         public void onCreate(Player player) {
             Game game = ActiveGames.getByUser(player);
 
@@ -189,8 +159,6 @@ public class DiceCommand extends BaseCommand {
         }
 
         @Subcommand("start|begin")
-        @Description("Begin het spel.")
-        @CommandPermission("geodobbel.commands.game.start")
         public void onStart(Player player) {
             Game game = ActiveGames.getByUser(player);
 
@@ -209,8 +177,6 @@ public class DiceCommand extends BaseCommand {
         }
 
         @Subcommand("stop|end")
-        @Description("Beëindig het spel.")
-        @CommandPermission("geodobbel.commands.game.stop")
         public void onStop(Player player) {
             Game game = ActiveGames.getByUser(player);
 
@@ -229,8 +195,6 @@ public class DiceCommand extends BaseCommand {
         }
 
         @Subcommand("join|betreed")
-        @Description("Betreed een spel.")
-        @CommandPermission("geodobbel.commands.game.join")
         public void onJoin(Player player, Short code) {
             Game game = ActiveGames.getByUser(player);
 
@@ -252,8 +216,6 @@ public class DiceCommand extends BaseCommand {
         }
 
         @Subcommand("code|id")
-        @Description("Krijg de code van het spel waar je in zit.")
-        @CommandPermission("geodobbel.commands.game.code")
         public void onCode(Player player) {
             Game game = ActiveGames.getByUser(player);
 
@@ -266,8 +228,6 @@ public class DiceCommand extends BaseCommand {
         }
 
         @Subcommand("leave|verlaat")
-        @Description("Verlaat het spel waar je in zit.")
-        @CommandPermission("geodobbel.commands.game.leave")
         public void onLeave(Player player) {
             Game game = ActiveGames.getByUser(player);
 
@@ -280,16 +240,30 @@ public class DiceCommand extends BaseCommand {
             game.showMessage("§6" + player.getName() + "§3 is weggegaan!");
             player.sendMessage("§3Je hebt het spel verlaten!");
         }
+
+        @Subcommand("adminplay|speelbeheerder")
+        public void onPlay(Player player) {
+            Game game = ActiveGames.getByUser(player);
+
+            if (game == null) {
+                player.sendMessage("§cJe moet in een spel zitten om dit command uit te voeren!");
+                return;
+            }
+
+            if (game.containsAdmin(player)) {
+                player.sendMessage("§cJe moet beheerder van het spel zijn om dit command uit te voeren!");
+                return;
+            }
+
+            game.toggleAdminPlaying(player);
+            if (game.containsPlayer(player)) player.sendMessage("§3Je doet nu mee met het spel!");
+            else player.sendMessage("§3Je doet niet meer mee met het spel maar bent nog steed beheerder.");
+        }
     }
 
     @Subcommand("dice|dobbelstenen")
-    @Description("Verander dobbelstenen in het spel.")
-    @CommandPermission("geodobbel.commands.dice")
     public class SubDiceCommand extends BaseCommand {
-        @Subcommand("add")
-        @Description("Doe nieuwe dobbelstenen in het spel.")
-        @CommandPermission("geodobbel.commands.dice.add")
-        @Syntax("<names regex> [faces regex]")
+        @Subcommand("add|toevoegen")
         public void onAdd(Player player, @Default("dobbelsteen**") String namePattern, @Default("1(een),2(twee),3(drie),4(vier),5(vijf),6(zes)") String facePattern) {
             Game game = ActiveGames.getByUser(player);
 
@@ -312,9 +286,6 @@ public class DiceCommand extends BaseCommand {
         }
 
         @Subcommand("remove|rem|verwijder")
-        @Description("Verwijder dobbelstenen uit het spel.")
-        @CommandPermission("geodobbel.commands.dice.remove")
-        @Syntax("<names regex>")
         public void onRemove(Player player, String namePattern) {
             Game game = ActiveGames.getByUser(player);
 
@@ -331,6 +302,25 @@ public class DiceCommand extends BaseCommand {
             game.remDice(namePattern);
             player.sendMessage("§3Je hebt de dobbelstenen uit het spel verwijderd.");
         }
+
+        @Subcommand("list|lijst")
+        public void onList(Player player) {
+            Game game = ActiveGames.getByUser(player);
+
+            if (game == null) {
+                player.sendMessage("§cJe moet in een spel zitten om dit command uit te voeren!");
+                return;
+            }
+
+            StringJoiner joiner = new StringJoiner(", ");
+
+            for (String diceName : game.diceList()) {
+                joiner.add(diceName);
+            }
+
+            player.sendMessage("§3De volgende dobbelstenen zitten in het spel:");
+            player.sendMessage("§6" + joiner);
+        }
     }
 
     @Subcommand("preset")
@@ -338,38 +328,25 @@ public class DiceCommand extends BaseCommand {
     @CommandPermission("geodobbel.commands.preset")
     public class PresetCommand extends BaseCommand {
         @Subcommand("load|laad")
-        @Description("Laad een preset in je spel.")
-        @CommandPermission("geodobbel.commands.preset.load")
-        @Syntax("<naam van preset>")
         public void onLoad(Player player, String presetName) {
 
         }
 
         @Subcommand("save")
-        @Description("Sla een preset op in de database.")
-        @CommandPermission("geodobbel.commands.preset.save")
-        @Syntax("<naam van preset>")
         public void onSave(Player player, String presetName) {
 
         }
 
         @Subcommand("list|lijst")
-        @Description("Bekijk alle presets van de database.")
-        @CommandPermission("geodobbel.commands.preset.save")
-        @Syntax("<naam van preset>")
         public void onList(Player player, @Default("1") Short page) {
 
         }
     }
 
     @Subcommand("settings|instellingen")
-    @Description("Verander de instellingen van het spel.")
-    @CommandPermission("geodobbel.commands.settings")
     public class SettingsCommand extends BaseCommand
     {
         @Subcommand("turnmode|turnmodus")
-        @Description("Zet beurten aan of uit.")
-        @CommandPermission("geodobbel.commands.settings.turns")
         public void onTurnMode(Player player, TurnMode turnMode) {
             Game game = ActiveGames.getByUser(player);
 
@@ -378,64 +355,101 @@ public class DiceCommand extends BaseCommand {
                 return;
             }
 
+            if (!game.containsAdmin(player)) {
+                player.sendMessage("§cJe moet beheerder zijn om dit command uit te voeren!");
+                return;
+            }
+
             game.settings.turnMode = turnMode;
-            player.sendMessage("§3Je hebt de turnmodus veranderd naar §6" + turnMode.toString() + " §3!");
-        }
-
-        @Subcommand("scores")
-        @Description("Zet scores aan of uit.")
-        @CommandPermission("geodobbel.commands.settings.scores")
-        @Syntax("<true|false>")
-        public void onScores(Player player, Sett) {
-
+            player.sendMessage("§3Je hebt de beurtenmodus veranderd naar §6" + turnMode.toString() + " §3!");
         }
 
         @Subcommand("rollmode|rolmodus")
-        @Description("Verander het roltype.")
-        @CommandPermission("geodobbel.commands.settings.rolltype")
-        @Syntax("<normal|add|average|highest|lowest>")
-        public void onRollMode(Player player, RollMode rollType) {
+        public void onRollMode(Player player, RollMode rollMode) {
+            Game game = ActiveGames.getByUser(player);
 
+            if (game == null) {
+                player.sendMessage("§cJe moet in een spel zitten om dit command uit te voeren!");
+                return;
+            }
+
+            if (!game.containsAdmin(player)) {
+                player.sendMessage("§cJe moet beheerder zijn om dit command uit te voeren!");
+                return;
+            }
+
+            game.settings.rollMode = rollMode;
+            player.sendMessage("§3Je hebt de rolmodus veranderd naar §6" + rollMode.toString() + " §3!");
         }
 
         @Subcommand("scoremode|scoremodus")
-        @Description("Verander het roltype.")
-        @CommandPermission("geodobbel.commands.settings.rolltype")
-        @Syntax("<add|average|highest|lowest>")
-        public void onScoreMode(Player player, ScoreMode scoreType) {
+        public void onScoreMode(Player player, ScoreMode scoreMode) {
+            Game game = ActiveGames.getByUser(player);
 
+            if (game == null) {
+                player.sendMessage("§cJe moet in een spel zitten om dit command uit te voeren!");
+                return;
+            }
+
+            if (!game.containsAdmin(player)) {
+                player.sendMessage("§cJe moet beheerder zijn om dit command uit te voeren!");
+                return;
+            }
+
+            game.settings.scoreMode = scoreMode;
+            player.sendMessage("§3Je hebt de scoremodus veranderd naar §6" + scoreMode.toString() + " §3!");
         }
 
         @Subcommand("order|volgorde")
-        @Description("Verander de scorevolgorde.")
-        @CommandPermission("geodobbel.commands.settings.rolltype")
-        @Syntax("<ascending|descending|none>")
         public void onOrder(Player player, ScoreOrder order) {
+            Game game = ActiveGames.getByUser(player);
 
+            if (game == null) {
+                player.sendMessage("§cJe moet in een spel zitten om dit command uit te voeren!");
+                return;
+            }
+
+            if (!game.containsAdmin(player)) {
+                player.sendMessage("§cJe moet beheerder zijn om dit command uit te voeren!");
+                return;
+            }
+
+            game.settings.order = order;
+            player.sendMessage("§3Je hebt de volgorde veranderd naar §6" + order.toString() + " §3!");
+        }
+
+        @Subcommand("gamemode|spelmodus")
+        public void onGameMode(Player player, GameMode gameMode) {
+            Game game = ActiveGames.getByUser(player);
+
+            if (game == null) {
+                player.sendMessage("§cJe moet in een spel zitten om dit command uit te voeren!");
+                return;
+            }
+
+            if (!game.containsAdmin(player)) {
+                player.sendMessage("§cJe moet beheerder zijn om dit command uit te voeren!");
+                return;
+            }
+
+            game.settings.gameMode = gameMode;
+            player.sendMessage("§3Je hebt de spelmodus veranderd naar §6" + gameMode.toString() + " §3!");
         }
     }
 
     @Subcommand("turn")
-    @Description("Geef de beurt aan een andere speler.")
-    @CommandPermission("geodobbel.commands.turn")
     public class TurnCommand extends BaseCommand {
         @Subcommand("skip|volgende")
-        @Description("Geef de volgende speler de beurt")
-        @CommandPermission("geodobbel.commands.turn.skip")
         public void onSkip(Player player) {
 
         }
 
         @Subcommand("back|terug")
-        @Description("Geef de vorige speler opnieuw de beurt")
-        @CommandPermission("geodobbel.commands.turn.back")
         public void onBack(Player player) {
 
         }
 
         @Subcommand("to|aan")
-        @Description("Geef een specifieke speler de beurt")
-        @CommandPermission("geodobbel.commands.turn.to")
         public void onTo(Player player, Player target) {
 
         }

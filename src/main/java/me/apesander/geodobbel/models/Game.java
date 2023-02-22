@@ -32,6 +32,10 @@ public class Game {
         dice.add(namePattern, facePattern);
     }
 
+    public void toggleAdminPlaying(Player player) {
+        users.setAdminPlaying(player, !users.containsPlayer(player));
+    }
+
     public void remDice(String namePattern) {
         dice.remove(namePattern);
     }
