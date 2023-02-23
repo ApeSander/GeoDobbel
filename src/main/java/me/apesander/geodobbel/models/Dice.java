@@ -11,6 +11,8 @@ public class Dice {
 
     public void add(String namePattern, String facePattern) {
 
+        remove(namePattern);
+
         namePattern = namePattern.replaceAll("\"", "");
         namePattern = namePattern.replaceAll("'", "");
         namePattern = namePattern.replaceAll(" ", "");
@@ -27,46 +29,53 @@ public class Dice {
             if (amount <= 1) list.add(new Die(name, facePattern));
             else {
                 for (int i = 1; i <= amount; i++) {
-                    list.add(new Die(name+i, facePattern));
+                    String diceName = name.replaceAll("\\*", "")+i;
+                    list.add(new Die(diceName, facePattern));
                 }
             }
         }
     }
 
     public void remove(String namePattern) {
-        namePattern = namePattern.replaceAll("\"", "");
-        namePattern = namePattern.replaceAll("'", "");
-        namePattern = namePattern.replaceAll(" ", "");
-        namePattern = namePattern.replaceAll("\\*", "");
-        namePattern = namePattern.replaceAll("[0-9]", "");
+        Die[] dice = getMulti(namePattern);
 
-        String[] names = namePattern.split(",");
-
-        for (String name : names) {
-            for (Die die : list) {
-                String name1 = die.name.replaceAll("[0-9]", "");
-                if (name.equals(name1)) list.remove(die);
-            }
+        for (Die die : dice) {
+            list.remove(die);
         }
     }
 
-    private Die[] get(String namePattern) {
+    private Die[] getMulti(String namePattern) {
         namePattern = namePattern.replaceAll("\"", "");
         namePattern = namePattern.replaceAll("'", "");
         namePattern = namePattern.replaceAll(" ", "");
-        namePattern = namePattern.replaceAll("\\*", "");
 
         String[] names = namePattern.split(",");
-
-        ArrayList<Die> patternDice = new ArrayList<>();
+        ArrayList<Die> diceResult = new ArrayList<>();
 
         for (String name : names) {
-            for (Die die : list) {
-                if (name.equals(die.name)) patternDice.add(die);
+            int amount = 0;
+
+            for (int i = 0; i < name.length(); i++) {
+                if (name.charAt(i) == '*') amount++;
+            }
+
+            if (amount <= 1) diceResult.add(get(name));
+            else {
+                for (int i = 1; i <= amount; i++) {
+                    diceResult.add(get(name.replaceAll("\\*", "")+i));
+                }
             }
         }
 
-        return patternDice.toArray(new Die[0]);
+        return diceResult.toArray(new Die[0]);
+    }
+
+    private Die get(String name) {
+        for (Die die : list) {
+            if (name.equals(die.name)) return die;
+        }
+
+        return null;
     }
 
     public Roll rollAll() {
@@ -80,7 +89,7 @@ public class Dice {
     }
 
     public Roll roll(String namePattern) {
-        Die[] dice = get(namePattern);
+        Die[] dice = getMulti(namePattern);
         Face[] faces = new Face[dice.length];
 
         for (int i = 0; i < dice.length; i++) {

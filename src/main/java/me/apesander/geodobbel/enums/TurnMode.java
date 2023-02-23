@@ -5,5 +5,5 @@ public enum TurnMode {
     PINGPONG, // Turns go 'clockwise' and then 'counterclockwise'
     RANDOM, // Turns are random
     MANUAL, // Turns wont go automatically
-    NONE // Turns are off
+    OFF // Turns are off
 }

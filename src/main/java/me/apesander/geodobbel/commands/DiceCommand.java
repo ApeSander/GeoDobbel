@@ -31,7 +31,42 @@ public class DiceCommand extends BaseCommand {
 
     @Subcommand("roll|gooi|rol|throw")
     public void onRoll(Player player) {
+        Game game = ActiveGames.getByUser(player);
 
+        if (game == null) {
+            player.sendMessage("§cJe moet in een spel zitten om dit command uit te voeren!");
+            return;
+        }
+
+        if (!game.containsPlayer(player)) {
+            player.sendMessage("§cJe moet meedoen als speler om te dobbelen!");
+            return;
+        }
+
+        if (game.state == GameState.START) {
+            player.sendMessage("§cHet spel is nog niet begonnen!");
+            return;
+        }
+
+        if (game.state == GameState.END) {
+            player.sendMessage("§cHet spel is al afgelopen!");
+            return;
+        }
+
+        if (!game.isTurnOf(player)) {
+            player.sendMessage("§cHet is niet jouw beurt om te dobbelen!");
+            return;
+        }
+
+        StringJoiner joiner = new StringJoiner(", ");
+
+        String[] result = game.rollDice(player);
+        for (String string : result) {
+            joiner.add(string);
+        }
+
+        game.showMessage("§3" + player.getName() + "heeft de dobbelstenen gegooid:");
+        game.showMessage("§6" + joiner);
     }
 
     @Subcommand("user|gebruiker")
@@ -250,14 +285,14 @@ public class DiceCommand extends BaseCommand {
                 return;
             }
 
-            if (game.containsAdmin(player)) {
+            if (!game.containsAdmin(player)) {
                 player.sendMessage("§cJe moet beheerder van het spel zijn om dit command uit te voeren!");
                 return;
             }
 
             game.toggleAdminPlaying(player);
             if (game.containsPlayer(player)) player.sendMessage("§3Je doet nu mee met het spel!");
-            else player.sendMessage("§3Je doet niet meer mee met het spel maar bent nog steed beheerder.");
+            else player.sendMessage("§3Je doet niet meer mee met het spel maar bent nog steeds beheerder.");
         }
     }
 

@@ -20,4 +20,8 @@ public class DicePlayer extends DiceUser {
         Roll roll = dice.rollAll();
         return roll.getResultNames();
     }
+
+    public float getScore() {
+        return score.getScore();
+    }
 }

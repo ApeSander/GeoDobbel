@@ -15,7 +15,7 @@ public class Turn {
         this.turnMode = turnMode;
     }
 
-    public int get() {
+    public short get() {
         return turn;
     }
 

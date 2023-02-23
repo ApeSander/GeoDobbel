@@ -1,6 +1,7 @@
 package me.apesander.geodobbel.models;
 
 import me.apesander.geodobbel.enums.GameState;
+import me.apesander.geodobbel.enums.TurnMode;
 import org.bukkit.entity.Player;
 
 // This object is a dice game holding all the data like players, settings and dice
@@ -52,8 +53,15 @@ public class Game {
         users.remUser(player);
     }
 
-    public void rollDice(Player player) {
+    public boolean isTurnOf(Player player) {
+        if (settings.turnMode == TurnMode.OFF) return true;
+
+        return users.indexOfPlayer(player) == turn.get();
+    }
+
+    public String[] rollDice(Player player) {
         String[] faceNames = users.getPlayer(player).roll(dice);
+        return faceNames;
     }
 
     public void nextTurn() {
