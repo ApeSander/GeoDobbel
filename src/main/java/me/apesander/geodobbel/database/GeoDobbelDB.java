@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 
-// This object handles the GeoDobbel database
+// This object handles the GeoDobbel database test
 public class GeoDobbelDB {
 
     private Connection connection;
