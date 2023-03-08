@@ -3,6 +3,7 @@ package me.apesander.geodobbel.database;
 import me.apesander.geodobbel.models.Preset;
 import me.apesander.geodobbel.models.PresetData;
 import me.apesander.geodobbel.utils.JsonConverter;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.IOException;
 import java.sql.*;
@@ -13,16 +14,27 @@ public class GeoDobbelDB {
 
     private Connection connection;
 
+    String url;
+
+    public GeoDobbelDB(FileConfiguration config) {
+        String name = config.getString("dbsettings.database");
+        String ip = config.getString("dbsettings.ip");
+        String type = config.getString("dbsettings.type");
+        String port = config.getString("dbsettings.port");
+        String user = config.getString("dbsettings.user");
+        String pass = config.getString("dbsettings.pass");
+
+        url = "jdbc:" + type + "://" + user + ":" + pass + "@" + ip + ":" + port + "/" + name;
+
+        System.out.println(url);
+    }
+
     public Connection getConnection() throws SQLException{
         if (connection != null) return connection;
 
-        String url = "jdbc:mysql://45.140.142.27:3306/s881_testdb_ApeSander";
-        String user = "u881_OL72Lnl0Le";
-        String pass = "o8Skum.UnQNgnrr+TkC@zsx3";
+        connection = DriverManager.getConnection(url, "u6_7Mx9hVtaY7", "ZaHmBD%5EoqBN%3D1GfUoB%5Em0A%40V");
 
-        this.connection = DriverManager.getConnection(url, user, pass);
-
-        return this.connection;
+        return connection;
     }
 
     public void initDatabase() throws SQLException {

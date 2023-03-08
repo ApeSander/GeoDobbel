@@ -1,6 +1,7 @@
 package me.apesander.geodobbel.models;
 
 import me.apesander.geodobbel.enums.GameState;
+import me.apesander.geodobbel.enums.ScoreMode;
 import me.apesander.geodobbel.enums.TurnMode;
 import org.bukkit.entity.Player;
 
@@ -20,6 +21,7 @@ public class Game {
     private Turn turn = new Turn();
     private DiceUsers users = new DiceUsers();
     public GameState state = GameState.START;
+    private DiceScoreboard scoreboard;
 
     public void promoteUser(Player player) {
         users.promoteUser(player);
@@ -59,9 +61,29 @@ public class Game {
         return users.indexOfPlayer(player) == turn.get();
     }
 
-    public String[] rollDice(Player player) {
-        String[] faceNames = users.getPlayer(player).roll(dice);
-        return faceNames;
+    public DicePlayer getCurrentPlayer() {
+        if (settings.turnMode == TurnMode.OFF) return null;
+        return users.getPlayer(turn.get());
+    }
+
+    public Roll rollAllDice(Player player) {
+        Roll roll = users.getPlayer(player).rollAll(dice);
+        scoreboard.update();
+        return roll;
+    }
+
+    public Roll rollDice(Player player, String namePattern) {
+        Roll roll;
+        if (namePattern.equals("*")) roll = users.getPlayer(player).rollAll(dice);
+        else roll = users.getPlayer(player).roll(dice, namePattern);
+        scoreboard.update();
+        return roll;
+    }
+
+    public Roll freeRoll(Player player, short range, short amount) {
+        Roll roll = users.getPlayer(player).freeRoll(settings.rollMode, range, amount);
+        scoreboard.update();
+        return roll;
     }
 
     public void nextTurn() {
@@ -80,7 +102,15 @@ public class Game {
             player.setScoreMode(settings.scoreMode);
         }
 
+        scoreboard = new DiceScoreboard(code, settings.order);
+
+        scoreboard.show(users);
+
         state = GameState.PLAY;
+    }
+
+    public void setTurn(Player player) {
+        turn.setTurn((short) users.indexOfPlayer(player));
     }
 
     public void stop() {
@@ -97,6 +127,10 @@ public class Game {
 
     public DiceAdmin[] getAdmins() {
         return users.getAdminList();
+    }
+
+    public DicePlayer getPlayer(Player player) {
+        return users.getPlayer(player);
     }
 
     public boolean containsPlayer(Player player) {
@@ -125,5 +159,13 @@ public class Game {
 
     public void showAdminMessage(String message) {
         users.showAdminMessage(message);
+    }
+
+    public Die[] getDice() {
+        return dice.getList();
+    }
+
+    public void setDice(Die[] dice) {
+        this.dice.set(dice);
     }
 }

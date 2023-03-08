@@ -1,0 +1,18 @@
+dbsettings:
+  # Your database name: 'my_database_name'
+  database: ''
+
+  # Your database ip: '01.234.567.89'
+  ip: ''
+
+  # Your database type: 'mariadb'
+  type: ''
+
+  # Your database port: '1234'
+  port: ''
+
+  # Your database username: 'my_username'
+  user: ''
+
+  # Your database password: 'my_very_secure_password'
+  pass: ''

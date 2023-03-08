@@ -1,5 +1,6 @@
 package me.apesander.geodobbel.models;
 
+import me.apesander.geodobbel.enums.ScoreOrder;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -13,9 +14,11 @@ public class DiceScoreboard {
     private DiceAdmin[] admins;
     private DiceSpectator[] spectators;
     private DicePlayer[] players;
+    private ScoreOrder order;
 
-    public DiceScoreboard(short code) {
+    public DiceScoreboard(short code, ScoreOrder order) {
         this.code = code;
+        this.order = order;
     }
 
     public void show(DiceUsers users) {
@@ -24,6 +27,10 @@ public class DiceScoreboard {
         spectators = users.getSpectatorList();
 
         update();
+    }
+
+    public void sort() {
+
     }
 
     public void update(){

@@ -3,13 +3,15 @@ package me.apesander.geodobbel.models;
 import me.apesander.geodobbel.enums.RollMode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 // This object holds all dice in a game
 public class Dice {
     private ArrayList<Die> list = new ArrayList<>();
     public RollMode rollMode = RollMode.NONE;
 
-    public void add(String namePattern, String facePattern) {
+    public void add(String namePattern, String facePattern) throws NumberFormatException{
 
         remove(namePattern);
 
@@ -30,6 +32,7 @@ public class Dice {
             else {
                 for (int i = 1; i <= amount; i++) {
                     String diceName = name.replaceAll("\\*", "")+i;
+
                     list.add(new Die(diceName, facePattern));
                 }
             }
@@ -107,5 +110,13 @@ public class Dice {
         }
 
         return names;
+    }
+
+    public Die[] getList() {
+        return list.toArray(new Die[0]);
+    }
+
+    public void set(Die[] dice) {
+        list = new ArrayList<>(Arrays.asList(dice));
     }
 }

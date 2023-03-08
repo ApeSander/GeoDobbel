@@ -13,15 +13,8 @@ public class Roll {
     public RollMode rollMode;
     private Face[] result;
 
-    public String[] getResultNames() {
-        String[] names = new String[result.length];
-
-        for (int i = 0; i < result.length; i++) {
-            if (result[i].name == null) names[i] = "" + result[i].num;
-            else names[i] = result[i].name;
-        }
-
-        return names;
+    public Face[] getFaces() {
+        return result;
     }
 
     public float getCalculatedResult() {

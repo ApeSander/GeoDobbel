@@ -65,7 +65,7 @@ public class DiceUsers {
 
     public void showMessage(String message) {
         for (DicePlayer user : players) {
-            if (getAdmin(user.getPlayer()) != null) user.getPlayer().sendMessage(message);
+            if (getAdmin(user.getPlayer()) == null) user.getPlayer().sendMessage(message);
         }
         for (DiceAdmin user : admins) {
             user.getPlayer().sendMessage(message);
@@ -134,6 +134,11 @@ public class DiceUsers {
 
         return false;
     }
+
+    public DicePlayer getPlayer(int index) {
+        return players.get(index);
+    }
+
 
     public boolean containsPlayer(Player player) {
         for (DicePlayer user : players) {

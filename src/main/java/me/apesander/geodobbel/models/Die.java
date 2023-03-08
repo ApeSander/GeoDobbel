@@ -1,9 +1,9 @@
 package me.apesander.geodobbel.models;
 
 import me.apesander.geodobbel.constants.Numbers;
+import me.apesander.geodobbel.utils.RandomNum;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 // This object is a die
 public class Die {
@@ -21,6 +21,8 @@ public class Die {
         facePattern = facePattern.replaceAll(" ", "");
         String[] faces = facePattern.split(",");
 
+        ArrayList<Face> tempfaces = new ArrayList<>();
+
         for (String face : faces) {
             String name = face.substring(face.indexOf('(') + 1, face.indexOf(')'));
             ArrayList<Short> values = new ArrayList<>();
@@ -35,20 +37,23 @@ public class Die {
             face = face.replaceAll("\\(.*\\)", "");
             face = face.replaceAll("\\*", "");
 
-            if (face.contains("-")) values = getValues(face);
+            System.out.println(face);
 
-            this.faces = new Face[values.size() * amount];
+            if (face.contains("-")) values = getValues(face);
+            else values.add(Short.parseShort(face));
 
             for (int i = 0; i < amount; i++) {
                 for (short value : values) {
-                    this.faces[i] = new Face(value, name);
+                    tempfaces.add(new Face(value, name, this.name));
                 }
             }
         }
+
+        this.faces = tempfaces.toArray(new Face[0]);
     }
 
-    private ArrayList<Short> getValues(String regex) throws NumberFormatException {
-        String[] values = regex.split("-");
+    private ArrayList<Short> getValues(String facePattern) throws NumberFormatException {
+        String[] values = facePattern.split("-");
 
         short num1 = Short.parseShort(values[0]);
         short num2 = Short.parseShort(values[1]);
@@ -73,7 +78,9 @@ public class Die {
     }
 
     public Face roll() {
-        Random random = new Random();
-        return faces[random.nextInt(faces.length)];
+        Face face = faces[RandomNum.genShort((short) 0, (short) (faces.length-1))];
+        System.out.println(faces.length);
+        System.out.println(face.name);
+        return face;
     }
 }
